@@ -20,10 +20,13 @@
     "@react-native-community/async-storage": "^1.12.1",
     "@react-native-community/datetimepicker": "^3.0.9",
     "@react-native-picker/picker": "^1.9.11",
+    "accordion-collapse-react-native": "^1.0.0",
     "expo": "~40.0.0",
+    "expo-app-loading": "^1.0.1",
     "expo-status-bar": "~1.0.3",
     "intl": "^1.2.5",
     "moment": "^2.29.1",
+    "native-base": "^2.15.2",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-40.0.1.tar.gz",
@@ -37,6 +40,7 @@
     "react-native-web": "~0.13.12",
     "react-native-week-selector": "0.0.6",
     "react-navigation": "^4.4.4",
+    "react-navigation-drawer": "^2.7.0",
     "react-navigation-stack": "^2.10.3"
   },
   "devDependencies": {

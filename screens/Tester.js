@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { StyleSheet, Text, View, SafeAreaView, TextInput, Alert } from 'react-native';
-import AsyncStorage from "@react-native-community/async-storage";
 import { Button } from 'react-native-paper';
 import { TimePickerModal } from 'react-native-paper-dates';
 import { Picker } from '@react-native-picker/picker';
 import WeekSelector from 'react-native-week-selector';
+import AsyncStorage from '@react-native-community/async-storage';
 import "intl";
 import "intl/locale-data/jsonp/en";
 import { DatabaseConnection } from '../components/database-connection';
@@ -12,7 +12,7 @@ import moment from 'moment';
 
 const db = DatabaseConnection.getConnection();
 
- function Hour ({ navigation }) {
+ function Test ({ navigation }) {
 
   const selectDate = new Date();
   const [currentDate, setCurrentDate] = React.useState('');
@@ -26,7 +26,7 @@ const db = DatabaseConnection.getConnection();
   const [Lvisible, setLVisible] = React.useState(false);
   const [Lfinishvisible, setLfinishVisible] = React.useState(false);
 
-  const [Hours, setHours] = React.useState(selectDate.getHours().toString());
+  const [Hours, setHours] = React.useState(selectDate.getHours());
   const [Minutes, setMinutes] = React.useState(selectDate.getMinutes());
   const [finishHours, setfinishHours] = React.useState(selectDate.getHours());
   const [finishMinutes, setfinishMinutes] = React.useState(selectDate.getMinutes());
@@ -54,18 +54,15 @@ const db = DatabaseConnection.getConnection();
     setLfinishVisible(false)
   }, [setLfinishVisible])
 
-  
+
+
   const onConfirm = React.useCallback(
     ({ hours, minutes }) => {
       setVisible(false);
       console.log({ hours, minutes });
-      var FrHours = moment(hours, 'HH');
-      var FrMinutes = moment(minutes, 'mm');
       //setTime('{$hours}:${minutes}')
-      hours = setHours(FrHours.format('HH'));
-      minutes = setMinutes(FrMinutes.format('mm'));
-      //setHours(hours.toString());
-      //setMinutes(minutes.toString());
+      hours = setHours(hours);
+      minutes = setMinutes(minutes);
     },
     [setVisible]
   );
@@ -74,10 +71,9 @@ const db = DatabaseConnection.getConnection();
     ({ hours, minutes }) => {
       setfinishVisible(false);
       console.log({ hours, minutes });
-      var FinHrs = moment(hours, 'HH');
-      var FinMnts = moment(minutes, 'mm');
-      hours = setfinishHours(FinHrs.format('HH'));
-      minutes = setfinishMinutes(FinMnts.format('mm'));
+      //setTime('{$hours}:${minutes}')
+      hours = setfinishHours(hours);
+      minutes = setfinishMinutes(minutes);
     },
     [setfinishVisible]
   );
@@ -104,74 +100,21 @@ const db = DatabaseConnection.getConnection();
     [setLfinishVisible]
   );
 
-  const save = async () => {
-    try{
-      await AsyncStorage.setItem("MyWeekEnding", selectedWeek)
-      await AsyncStorage.setItem("MyWeek", currentDate)
-      await AsyncStorage.setItem("MyDays", dayoftheWeek)
-      await AsyncStorage.setItem("MyProjNum", projNum)
-    }
-    catch (err)
-    {
-      alert(err)
-    }
-  };
-
-  const load = async () => {
-    try{
-     let selectedWeek = await AsyncStorage.getItem("MyWeekEnding")
-     let currentDate = await AsyncStorage.getItem("MyWeek")
-     let dayoftheWeek = await AsyncStorage.getItem("MyDays")
-     let projNum = await AsyncStorage.getItem("MyProjNum")
-
-     if(selectedWeek !== null)
-     {
-      setselectedWeek(selectedWeek)
-     }
-     
-     if(currentDate !== null)
-     {
-      setCurrentDate(currentDate)
-     }
-
-     if(dayoftheWeek !== null)
-     {
-      setDayoftheWeek(dayoftheWeek)
-     }
-
-     if(projNum !== null)
-      {
-        setprojNum(projNum)
-      }
-
-    }
-    catch (err){
-      alert(err)
-    }
-  };
-
-  React.useEffect(() => {
-    load();
-  },[])
-
-
   const saveStartingWeek = (value) => {
-        moment.locale('en');
         console.log("saveStartingWeek - value:", value);
-        setselectedWeek(moment(value).format('MMM Do'));
-        //setselectedWeek(new Date(value).toString());
+        setselectedWeek(new Date(value).toString());
   }
 
   const renderUserNames = () => {
-    if(projNum=='VOD103015'){
-      return [<Picker.Item key="uniqueID8" label="CE005 ~ Woodcock Hill" value="VOD103015 1" />,
-             <Picker.Item key="uniqueID7" label="CE006 ~ Crusheen knocknamucky" value="VOD103015 2" />,
-            <Picker.Item key="uniqueID6" label="CE007 ~ Lack West" value="VOD103015 3" />,
-            <Picker.Item key="uniqueID5" label="CE008 ~ Dangan Ballyvaughan" value="VOD103015 4" />,
-            <Picker.Item key="uniqueID4" label="CE009 ~ Glenagall" value="VOD103015 5" />]
+    if(projNum=='VOD103015 ~ Assure Provide engsupport Oct 1st to Oct 31st 2019'){
+      return [<Picker.Item key="uniqueID8" label="CE005 ~ Woodcock Hill" value="CE005 ~ Woodcock Hill" />,
+             <Picker.Item key="uniqueID7" label="CE006 ~ Crusheen knocknamucky" value="CE006 ~ Crusheen knocknamucky" />,
+            <Picker.Item key="uniqueID6" label="CE007 ~ Lack West" value="CE007 ~ Lack West" />,
+            <Picker.Item key="uniqueID5" label="CE008 ~ Dangan Ballyvaughan" value="CE008 ~ Dangan Ballyvaughan" />,
+            <Picker.Item key="uniqueID4" label="CE009 ~ Glenagall" value="CE009 ~ Glenagall" />]
      }
    
-     else if(projNum=='ABO101597'){
+     else if(projNum=='ABO101597 ~ Over head Line works Cluster 1 ~ CLS001 ~ Cluster1 OHL'){
        return [<Picker.Item key="uniqueID3" label="CLS001 ~ Cluster 1 OHL" value="ABO101597 1" />
              ]
       }
@@ -182,6 +125,78 @@ const db = DatabaseConnection.getConnection();
        }
 
   }
+
+  const save = async() => {
+
+    try{
+      await AsyncStorage.setItem("Week Ending", selectedWeek),
+      await AsyncStorage.setItem("Days", dayoftheWeek),
+      await AsyncStorage.setItem("ProjectNumber", projNum)
+      await AsyncStorage.setItem("SiteID", siteID)
+    }
+    catch(err)
+    {
+      alert(err)
+    }
+  };
+  
+  const loadn = async() => {
+  
+    try{
+      let selectedWeek = await AsyncStorage.getItem("Week Ending");
+      let dayoftheWeek = await AsyncStorage.getItem("Days");
+      let projNum = await AsyncStorage.getItem("ProjectNumber");
+      let siteID = await AsyncStorage.getItem("Site ID")
+  
+      if(selectedWeek !== null){
+        setselectedWeek(selectedWeek)
+      }
+     
+      if(dayoftheWeek !== null){
+        setDayoftheWeek(dayoftheWeek)
+      } 
+      if(projNum !== null){
+        setprojNum(projNum)
+      }
+
+      if(siteID !== null){
+        setsiteID(siteID)
+      }
+    }
+    catch(err)
+    {
+      alert(err)
+    }
+  };
+  
+  const remove = async() => {
+  
+    try{
+      await AsyncStorage.removeItem("ProjectNumber")
+      } catch(err)
+    {
+      alert(err)
+    }finally{
+      setprojNum("")
+    }
+  };
+  
+  React.useEffect(() => {
+    loadn();
+  
+  },[]);
+  
+
+  const UpdateContent = async () => {
+    try {
+    alert("Success");
+    save();
+    loadn()
+    add_entry();
+    } catch (error) {
+    alert(error.message);
+    }  
+}
 
   React.useEffect(() => {
     var date = new Date().getDate(); //Current Date
@@ -201,12 +216,12 @@ const db = DatabaseConnection.getConnection();
   console.log(dateTime);*/
 
   const add_entry = () => {
-    console.log( selectedWeek, currentDate, projNum, description, Hours, Minutes, finishHours, finishMinutes, LunchHours, LunchMinutes,  finishLunchHours, finishLunchMinutes,  0, siteID, dayoftheWeek);
+    console.log( selectedWeek, currentDate, projNum, description, Hours, Minutes, finishHours, finishMinutes, LunchHours, LunchMinutes,  finishLunchHours, finishLunchMinutes,  0, siteID);
 
     db.transaction(function (tx) {
       tx.executeSql(
-        'INSERT INTO Timesheet(user_id, eow, date, projNum, comment , arrivalHours , arrivalMinutes,  departHours, departMinutes, startLHours, startLMinutes, FinishLHours, FinishLMinutes,  totalHrs, siteID, dayoftheweek) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
-        [1, selectedWeek, currentDate, projNum, description, Hours, Minutes, finishHours, finishMinutes, LunchHours, LunchMinutes, finishLunchHours, finishLunchMinutes,   0, siteID, dayoftheWeek ],
+        'INSERT INTO Timesheet(user_id, eow, date, projNum, comment , arrivalHours , arrivalMinutes,  departHours, departMinutes, startLHours, startLMinutes, FinishLHours, FinishLMinutes,  totalHrs, siteID) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+        [1, selectedWeek, currentDate, projNum, description, Hours, Minutes, finishHours, finishMinutes, LunchHours, LunchMinutes, finishLunchHours, finishLunchMinutes,   0, siteID ],
         (tx, results) => {
           console.log('Results', results.rowsAffected);
           if (results.rowsAffected > 0) {
@@ -224,7 +239,6 @@ const db = DatabaseConnection.getConnection();
           } else alert('Error Entry unsuccesfull !!!');
         }
       );
-      save()
     });
   };
 
@@ -247,7 +261,7 @@ const db = DatabaseConnection.getConnection();
 
           
           <View>
-                    <Text style={{fontWeight: 'bold'}}>
+                    <Text>
                         Day of the Week 
                     </Text>
                    <Picker style={styles.datefive}
@@ -274,15 +288,13 @@ const db = DatabaseConnection.getConnection();
                   {<Picker
                       mode='dropdown'
                       selectedValue={projNum}
-                      onPress={() => save()}
                       onValueChange={(itemValue, itemIndex) =>
                           //this.setState({ projNum: itemValue })
                           setprojNum(itemValue)
-                          
                       }>
                       <Picker.Item key="uniqueID9" label="Please Select" value="" />
-                      <Picker.Item key="uniqueID10" label="VOD103015 ~ Assure Provide engsupport Oct 1st to Oct 31st 2019" value="VOD103015" />
-                      <Picker.Item key="uniqueID11" label="ABO101597 ~ Over head Line works Cluster 1 ~ CLS001 ~ Cluster1 OHL" value="ABO101597" />
+                      <Picker.Item key="uniqueID10" label="VOD103015 ~ Assure Provide engsupport Oct 1st to Oct 31st 2019" value="VOD103015 ~ Assure Provide engsupport Oct 1st to Oct 31st 2019" />
+                      <Picker.Item key="uniqueID11" label="ABO101597 ~ Over head Line works Cluster 1 ~ CLS001 ~ Cluster1 OHL" value="ABO101597 ~ Over head Line works Cluster 1 ~ CLS001 ~ Cluster1 OHL" />
                       <Picker.Item key="uniqueID12" label="Client" value="Client" />
                   </Picker>}
               </View>
@@ -360,7 +372,7 @@ const db = DatabaseConnection.getConnection();
         onDismiss={onLFinishDismiss}
         onConfirm={onLFinishConfirm}
         hours={12} // default: current hours
-        minutes={0} // default: current minutes
+        minutes={14} // default: current minutes
         label="Select time" // optional, default 'Select time'
         cancelLabel="Cancel" // optional, default: 'Cancel'
         confirmLabel="Ok" // optional, default: 'Ok'
@@ -380,7 +392,7 @@ const db = DatabaseConnection.getConnection();
       />
 
 
-      <Button color="#09253a" onPress={add_entry}>
+      <Button color="#09253a" onPress={UpdateContent}>
               Add
             </Button>
       
@@ -502,4 +514,4 @@ const db = DatabaseConnection.getConnection();
       },
      });
      
-     export default Hour;
+     export default Test;
